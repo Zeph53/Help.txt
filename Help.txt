@@ -95,7 +95,13 @@ fi
 #
 ## XFCE related
 #
+## Fix XFCE4-PANEL launcher not passing the correct $PATH
+## Append to "initialize variables for use by all session scripts"
+## In "/etc/X11/Xsession"
+PATH=$PATH:/usr/games:usr/local/games
+#
 ## Correctly creating a xfce4 panel launcher as it stupidly doesn't pass to bash by default
+## See "Fix XFCE4-PANEL launcher"
 bash -i -c 'command'
 #
 ## Open new terminal window and run command. works best with above
@@ -123,7 +129,11 @@ QT_AUTO_SCREEN_SCALE_FACTOR=0 command
 echo '
 vm.swappiness = 10
 ' >> /etc/sysctl.conf
-
+#
+## Enable GTK Inspector if it's not enabled
+## Or install it
+gsettings set org.gtk.Settings.Debug enable-inspector-keybinding true
+apt-get install libgtk-3-dev
 
 #
 ## APT related
@@ -212,7 +222,7 @@ rm /etc/cups/printers.*
 rm /etc/cups/subscriptions.*
 #
 ## Set VLC to run as root
-sed -i 's/geteuid/getppid/' /usr/bin/vlc
+sed -i 's/geteuid/getppid/g' /usr/bin/vlc
 #
 ## In case of can't start Insurgency (or more)
 ## Make file hidden with .
@@ -222,6 +232,12 @@ gio trash --force "~/.steam/steam/steamapps/common/insurgency2/bin/libgcc_s.so.1
 #
 ## Disable flat volume in Pulseaudio
 sed -i 's/flat-volumes = yes/flat-volumes = no/g' /etc/pulse/daemon.conf
+#
+## Run Pipewire as Root
+sed 's/ConditionUser=!root/#ConditionUser=!root/g' /etc/systemd/user/default.target.wants/pipewire.service
+sed 's/ConditionUser=!root/#ConditionUser=!root/g' /etc/systemd/user/default.target.wants/pipewire-pulse.service
+sed 's/ConditionUser=!root/#ConditionUser=!root/g' /etc/systemd/user/sockets.target.wants/pipewire.socket
+sed 's/ConditionUser=!root/#ConditionUser=!root/g' /etc/systemd/user/sockets.target.wants/pipewire-pulse.socket
 
 
 #
